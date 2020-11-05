@@ -22,7 +22,7 @@ def getCurrentWindow():
         return None
 
 
-def newApp(window):
+def existingApp(window):
     with open('usage.json') as f:
         jDict = json.loads(f.read())
         
@@ -32,12 +32,37 @@ def newApp(window):
         return False
 
 
-def log(currentWindow, lastOpened, timeSpent):
-    print(currentWindow)
-    print(lastOpened)
-    print(timeSpent)
+def openUsage():
+    with open('usage.json') as f:
+        jDict = json.loads(f.read())
+        f.close()
+    return jDict
 
-    print(newApp(currentWindow))
+def newApp(currentWindow, lastOpened, timeSpent):
+    with open('usage.json') as f:
+        jDict = json.loads(f.read())
+
+def newEntry(currentWindow, lastOpened, timeSpent):
+    usage = openUsage()
+
+    with open('usage.json', "w") as f:
+        usage.append({
+            "name": currentWindow,
+            "time": {
+                "last_opened": lastOpened,
+                "time_spent": timeSpent
+            }
+        })
+
+        json.dump(usage, f)
+        f.close()
+    
+
+def log(currentWindow, lastOpened, timeSpent):
+    if existingApp(currentWindow):
+        newApp(currentWindow, lastOpened, timeSpent)
+    else:
+        newEntry(currentWindow, lastOpened, timeSpent)
 
 
 def main():
