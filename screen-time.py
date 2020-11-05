@@ -1,5 +1,6 @@
 import sys
 import time
+import json
 
 if sys.platform in ['Windows', 'win32', 'cygwin']:
     import win32gui
@@ -21,10 +22,22 @@ def getCurrentWindow():
         return None
 
 
+def newApp(window):
+    with open('usage.json') as f:
+        jDict = json.loads(f.read())
+        
+        for i in jDict:
+            if i['name'] == window:
+                return True
+        return False
+
+
 def log(currentWindow, lastOpened, timeSpent):
     print(currentWindow)
     print(lastOpened)
     print(timeSpent)
+
+    print(newApp(currentWindow))
 
 
 def main():
