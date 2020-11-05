@@ -22,14 +22,11 @@ def getCurrentWindow():
         return None
 
 
-def existingApp(window):
-    with open('usage.json') as f:
-        jDict = json.loads(f.read())
-        
-        for i in jDict:
-            if i['name'] == window:
-                return True
-        return False
+def existingApp(window, usage):
+    for i in usage:
+        if i['name'] == window:
+            return True
+    return False
 
 
 def openUsage():
@@ -38,31 +35,39 @@ def openUsage():
         f.close()
     return jDict
 
-def newApp(currentWindow, lastOpened, timeSpent):
-    with open('usage.json') as f:
-        jDict = json.loads(f.read())
 
 def newEntry(currentWindow, lastOpened, timeSpent):
     usage = openUsage()
 
-    with open('usage.json', "w") as f:
-        usage.append({
-            "name": currentWindow,
-            "time": {
-                "last_opened": lastOpened,
-                "time_spent": timeSpent
-            }
-        })
+    #print(currentWindow)
+    #print(lastOpened)
+    #print(timeSpent)
+    #print(usage)
 
-        json.dump(usage, f)
+    with open('usage.json', "w") as f:
+        if existingApp(currentWindow, usage):
+            for entry in usage:
+                if entry['name'] == currentWindow:
+                    entry['time']['last_opened'] = lastOpened
+                    entry['time']['time_spent'] = entry['time']['time_spent'] + timeSpent
+                    json.dump(usage, f)
+                    break
+        else:
+            usage.append({
+                "name": currentWindow,
+                "time": {
+                    "last_opened": lastOpened,
+                    "time_spent": timeSpent
+                }
+            })
+
+            json.dump(usage, f)
+
         f.close()
-    
+
 
 def log(currentWindow, lastOpened, timeSpent):
-    if existingApp(currentWindow):
-        newApp(currentWindow, lastOpened, timeSpent)
-    else:
-        newEntry(currentWindow, lastOpened, timeSpent)
+    newEntry(currentWindow, lastOpened, timeSpent)
 
 
 def main():
