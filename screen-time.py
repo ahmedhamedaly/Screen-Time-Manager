@@ -21,8 +21,10 @@ def getCurrentWindow():
         return None
 
 
-def logTime(currentWindow, startTime, endTime):
+def log(currentWindow, lastOpened, timeSpent):
     print(currentWindow)
+    print(lastOpened)
+    print(timeSpent)
 
 
 def main():
@@ -37,9 +39,12 @@ def main():
             if prevTime != None:
                 timeSpent = time.time() - prevTime
 
-                print(timeSpent)  
-                print(currWindow)
-                
+                #print(timeSpent)  
+                #print(currWindow)
+
+                if timeSpent > 1:
+                    log(prevWindow, time.time(), timeSpent)
+
                 prevTime = time.time()
                 prevWindow = currWindow
             else:
