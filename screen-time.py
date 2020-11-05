@@ -1,4 +1,5 @@
 import sys
+import time
 
 if sys.platform in ['Windows', 'win32', 'cygwin']:
     import win32gui
@@ -6,13 +7,9 @@ if sys.platform in ['Windows', 'win32', 'cygwin']:
 elif sys.platform in ['Mac', 'darwin', 'os2', 'os2emx']:
     from AppKit import NSWorkspace
     mac = True
-elif sys.platform in ['linux', 'linux2']:
-    import linux
-    linux = True
 else:
     print("No Support for your current OS")
 
-prevWindow = None
 
 def getCurrentWindow():
     if windows:
@@ -20,15 +17,34 @@ def getCurrentWindow():
         return c.split('-')[-1].lstrip(' ')
     elif mac:
         return (NSWorkspace.sharedWorkspace().activeApplication()['NSApplicationName'])
-    elif linux:
-        return linux.get_active_window_x()
     else:
         return None
 
-while True:
-    
-    currWindow = getCurrentWindow()
 
-    if prevWindow != currWindow:
-        prevWindow = currWindow        
-        print(currWindow)
+def logTime(currentWindow, startTime, endTime):
+    print(currentWindow)
+
+
+def main():
+    prevWindow = None
+    prevTime = None
+
+    while True:
+        
+        currWindow = getCurrentWindow()
+
+        if prevWindow != currWindow:
+            if prevTime != None:
+                timeSpent = time.time() - prevTime
+
+                print(timeSpent)  
+                print(currWindow)
+                
+                prevTime = time.time()
+                prevWindow = currWindow
+            else:
+                prevTime = time.time()
+
+
+if __name__ == "__main__":
+    main()
